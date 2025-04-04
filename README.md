@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Coverage](https://codecov.io/gh/omer1004/Guardian-View-RestAPI-Backend/branch/main/graph/badge.svg)](https://codecov.io/gh/omer1004/Guardian-View-RestAPI-Backend)
-![Guardian View Logo](assets/images/guardian-view-logo.png)
+![Guardian View Logo](assets/images/Guardian%20View%20Logo.png)
 
 ## 📋 Overview
 
@@ -186,4 +186,4 @@ For questions or support, please open an issue in the repository.
   <sub>Built with ❤️ by Guardian View Team</sub>
 </div>
 
-![Guardian View Logo](assets/images/guardian-view-logo.png)
+![Guardian View Logo](assets/images/Guardian%20View%20Logo.png)
