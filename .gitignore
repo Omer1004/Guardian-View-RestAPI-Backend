@@ -44,6 +44,7 @@ Videos_from_user/
 *.mov
 *.jpeg
 *.png
+!assets/images/*.png
 
 # Firebase
 *firebase*.json
