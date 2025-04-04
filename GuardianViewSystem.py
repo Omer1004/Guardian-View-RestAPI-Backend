@@ -17,16 +17,26 @@ def init_services():
     firebase_service.setVideoProcessingService(video_processing_service)
     return video_processing_service, firebase_service
 
-def proccess_test_videos(video_processing_service, firebase_service):
+def process_test_videos(video_processing_service, firebase_service):
     # Get all video names in the test video folder
-    test_video_path = "Tests/Test Videos/"
+    test_video_path = os.path.join("Tests", "Test Videos")
+    if not os.path.exists(test_video_path):
+        logging.error("Test video directory not found: %s", test_video_path)
+        return
+        
     test_video_names = [video_name for video_name in os.listdir(test_video_path) if video_name.endswith(".mp4")]
+    if not test_video_names:
+        logging.warning("No .mp4 files found in %s", test_video_path)
+        return
 
     # Process test videos
     for video_name in test_video_names:
-        video_path = test_video_path + video_name
-        video_processing_service.video_analysis(video_path,showAnalysis=True)
-        logging.info(f"Video analysis completed for {video_name}")
+        video_path = os.path.join(test_video_path, video_name)
+        try:
+            video_processing_service.video_analysis(video_path, showAnalysis=True)
+            logging.info("Video analysis completed for %s", video_name)
+        except Exception as e:
+            logging.error("Failed to process video %s: %s", video_name, str(e))
 
 
 
@@ -59,7 +69,7 @@ def test_main():
     #video_processing_service.live_video_analysis()
     #time.sleep(30)
     #firebase_service.stop_live_detection()
-    proccess_test_videos(video_processing_service, firebase_service)
+    process_test_videos(video_processing_service, firebase_service)
     
 
 

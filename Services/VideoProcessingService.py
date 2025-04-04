@@ -26,7 +26,7 @@ class VideoProcessingService:
     # The function generates alerts if threats are detected consistently for a specified number of frames (required_consistent_frames).
     # This version selects the frame with the highest confidence in the longest streak of consistent detections for alert generation.
     def video_analysis_longest_streak(self, video_path, showAnalysis=False, videoURL=None, location='Tel Aviv', longitud=32.114414, latitude=34.817955):
-        logging.info(f"Starting video analysis for {video_path}")
+        logging.info("Starting video analysis for %s", video_path)
 
         try:
             confidenceThreshold = self.confidenceThreshold
@@ -42,14 +42,14 @@ class VideoProcessingService:
             longest_streak_best_frame = None
             required_consistent_frames = 3  # Number of consistent detections required to trigger an alert
 
-            logging.info(f"Processing video {video_path}")
+            logging.info("Processing video %s", video_path)
 
             for r in results:
                 total_frames += 1
-                logging.info(f"Processing frame {frame_idx}")
+                logging.info("Processing frame %d", frame_idx)
 
                 if not hasattr(r, 'boxes') or r.boxes is None:
-                    logging.info(f"No boxes found in frame {frame_idx}")
+                    logging.info("No boxes found in frame %d", frame_idx)
                     frame_idx += 1
                     continue
 
@@ -62,7 +62,7 @@ class VideoProcessingService:
                     if conf >= confidenceThreshold and cls_idx in [0, 1]:
                         class_name = self.model.names[int(cls_idx)]
                         if self.is_valid_bbox(bbox, r.orig_shape):
-                            logging.info(f"Detected {class_name} with confidence {conf}")
+                            logging.info("Detected %s with confidence %f", class_name, conf)
                             frame_threats = True
 
                             if conf > streak_max_conf:
@@ -93,8 +93,8 @@ class VideoProcessingService:
                 logging.info("No valid frames detected with the required confidence threshold.")
 
         except Exception as e:
-            logging.error(f"Error occurred during video analysis: {str(e)}")
-            self.firebase_service.log_error(f"Error occurred during video analysis: {str(e)}")
+            logging.error("Error occurred during video analysis: %s", str(e))
+            self.firebase_service.log_error("Error occurred during video analysis: %s", str(e))
             return
 
 
@@ -103,7 +103,7 @@ class VideoProcessingService:
     # The function generates alerts if threats are detected consistently for a specified number of frames (required_consistent_frames).
     # This version selects the frame with the highest confidence across the entire video for alert generation.
     def video_analysis(self, video_path, showAnalysis= False, videoURL=None,location='Tel Aviv',longitud=32.114414,latitude=34.817955):
-        logging.info(f"Starting video analysis for {video_path}")
+        logging.info("Starting video analysis for %s", video_path)
 
         try:
             confidenceThreshold = self.confidenceThreshold
@@ -118,14 +118,14 @@ class VideoProcessingService:
             max_consistent_detections = 0
             required_consistent_frames = 2  # Number of consistent detections required to trigger an alert
 
-            logging.info(f"Processing video {video_path}")
+            logging.info("Processing video %s", video_path)
 
             for r in results:
                 total_frames += 1
-                logging.info(f"Processing frame {frame_idx}")
+                logging.info("Processing frame %d", frame_idx)
 
                 if not hasattr(r, 'boxes') or r.boxes is None:
-                    logging.info(f"No boxes found in frame {frame_idx}")
+                    logging.info("No boxes found in frame %d", frame_idx)
                     frame_idx += 1
                     continue
 
@@ -138,7 +138,7 @@ class VideoProcessingService:
                     if conf >= confidenceThreshold and cls_idx in [0, 1]:
                         class_name = self.model.names[int(cls_idx)]
                         if self.is_valid_bbox(bbox, r.orig_shape):
-                            logging.info(f"Detected {class_name} with confidence {conf}")
+                            logging.info("Detected %s with confidence %f", class_name, conf)
                             frame_threats = True
 
                             if conf > streak_max_conf:
@@ -175,8 +175,8 @@ class VideoProcessingService:
             
 
         except Exception as e:
-            logging.error(f"Error occurred during video analysis: {str(e)}")
-            self.firebase_service.log_error(f"Error occurred during video analysis: {str(e)}")
+            logging.error("Error occurred during video analysis: %s", str(e))
+            self.firebase_service.log_error("Error occurred during video analysis: %s", str(e))
             return
 
 
@@ -189,7 +189,7 @@ class VideoProcessingService:
 
         if bbox_width / img_width <= 5/6 and bbox_height / img_height <= 5/6:
             return True
-        logging.info(f"Invalid bounding box detected: {bbox}")
+        logging.info("Invalid bounding box detected: %s", bbox)
         return False
 
 
@@ -215,7 +215,7 @@ class VideoProcessingService:
                 severity = "High"
             elif severity == "High":
                 severity = "Emergency"
-        logging.info(f"Determined severity for {class_name} with confidence {conf}: {severity}")
+        logging.info("Determined severity for %s with confidence %f: %s", class_name, conf, severity)
         return severity
 
 
@@ -227,23 +227,23 @@ class VideoProcessingService:
             class_name = frame.get('class_name')
             frame_idx = frame.get('frame_idx')
             timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-            local_filename = f"{class_name}_{frame_idx}_{timestamp}.jpg"
-            local_filepath = f'Results/{local_filename}'
+            local_filename = "%s_%s_%s.jpg" % (class_name, frame_idx, timestamp)
+            local_filepath = 'Results/%s' % local_filename
             severity = self.determine_severity(frame.get('conf'), class_name)
             
             # Save the frame locally
             r.save(local_filepath)
-            logging.info(f"Saving frame for detected {class_name} with confidence {frame.get('conf')}")
+            logging.info("Saving frame for detected %s with confidence %f", class_name, frame.get('conf'))
             conf = float(frame.get('conf'))
             
             # Upload the frame to Firebase Storage
             image_url = self.firebase_service.upload_frame(local_filepath, local_filename)
-            logging.info(f"Image URL: {image_url}")
+            logging.info("Image URL: %s", image_url)
             
             self.generateAlert(class_name, conf, image_url, timestamp, source, video_path, severity)
         except Exception as e:
-            logging.error(f"Error occurred while saving frame and generating alert: {str(e)}")
-            self.firebase_service.log_error(f"Error occurred while saving frame and generating alert: {str(e)}")
+            logging.error("Error occurred while saving frame and generating alert: %s", str(e))
+            self.firebase_service.log_error("Error occurred while saving frame and generating alert: %s", str(e))
             return
         
     
@@ -255,10 +255,10 @@ class VideoProcessingService:
         # Save the alert to Firestore
         try:
             self.firebase_service.add_alert('alerts', alert_data)
-            logging.info(f"Alert created and saved to Firestore: {alert_data}")
+            logging.info("Alert created and saved to Firestore: %s", alert_data)
         except Exception as e:
-            logging.error(f"Error occurred while saving alert to Firestore: {str(e)}")
-            self.firebase_service.log_error(f"Error occurred while saving alert to Firestore: {str(e)}")
+            logging.error("Error occurred while saving alert to Firestore: %s", str(e))
+            self.firebase_service.log_error("Error occurred while saving alert to Firestore: %s", str(e))
             return
     
 
@@ -318,7 +318,7 @@ class VideoProcessingService:
                         if conf >= confidenceThreshold and cls_idx in [0, 1]:  # Assuming 0 and 1 are the class indices for threats
                             class_name = self.model.names[int(cls_idx)]
                             if self.is_valid_bbox(bbox, r.orig_shape):
-                                logging.info(f"Detected {class_name} with confidence {conf}")
+                                logging.info("Detected %s with confidence %f", class_name, conf)
                                 threat_detected = True
 
                                 if conf > streak_max_conf:
@@ -341,7 +341,7 @@ class VideoProcessingService:
                         )
                         alert_active = True
                         consistent_detections = 0  # Reset after triggering the alert
-                        logging.info(f"Alert triggered for {streak_best_frame['class_name']}")
+                        logging.info("Alert triggered for %s", streak_best_frame['class_name'])
 
                 # Reset alert status if no threats are detected for the duration of the cooldown period
                 if alert_active and last_detection_time and current_time - last_detection_time > cool_down_time:
@@ -358,7 +358,7 @@ class VideoProcessingService:
             cap.release()
             cv2.destroyAllWindows()
         except Exception as e:
-            error_message = f"Error during live video analysis: {str(e)}"
+            error_message = "Error during live video analysis: %s" % str(e)
             self.firebase_service.stop_live_detection()
             logging.error(error_message)
             self.firebase_service.log_error(error_message)
