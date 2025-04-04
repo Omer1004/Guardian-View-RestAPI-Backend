@@ -176,14 +176,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Firebase team for the robust cloud infrastructure
 - OpenCV community for computer vision tools
 
-## 📞 Contact
-
-For questions or support, please open an issue in the repository.
-
----
 
 <div align="center">
-  <sub>Built with ❤️ by Guardian View Team</sub>
+  <sub>Guardian View Team</sub>
 </div>
 
 ![Guardian View Logo](assets/images/Guardian%20View%20Logo.png)
