@@ -15,6 +15,7 @@ Guardian View is an advanced security monitoring solution that leverages artific
 - 🔒 This Repository - Backend REST API and AI processing
 
 ### Project Documentation
+
 For complete project details, methodology, and research, please refer to our comprehensive [Project Book (PDF)](docs/Project_Book.pdf).
 
 ## ✨ Key Features
@@ -56,8 +57,9 @@ graph TD
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/GurdainViewFinalProject2024/GuardianViewRest.git
-   cd GuardianViewRest
+   git clone https://github.com/Omer1004/Guardian-View-RestAPI-Backend.git
+   cd Guardian-View-RestAPI-Backend
+
    ```
 
 2. Create and activate virtual environment:
@@ -111,11 +113,28 @@ The project includes comprehensive test coverage:
 python -m unittest Tests/test_video_detection.py
 
 
+# Run Firebase service tests
+python -m unittest Tests/test_firebase_service.py
+
+# Run all tests
+python -m unittest discover Tests
+```
+
 
 ### Test Structure
 - `Tests/test_video_detection.py`: Tests for video processing and threat detection
 - `Tests/test_firebase_service.py`: Tests for Firebase integration
-```
+
+- `Tests/run_tests.py`: Test runner for executing all tests
+
+### Test Coverage
+The test suite covers:
+- Video processing and analysis
+- Threat detection accuracy
+- Firebase service operations
+- Real-time monitoring capabilities
+- System configuration and initialization
+
 
 ## 📦 Project Structure
 
